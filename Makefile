@@ -1,3 +1,7 @@
+.PHONY: test-fourier
+test-fourier:
+	$(call run_in_venv,"cmd/test_fourier.py")
+
 .PHONY: simulate
 simulate:
 	$(call run_in_venv,"cmd/simulate.py")
