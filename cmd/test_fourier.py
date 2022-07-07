@@ -19,7 +19,8 @@ def main() -> None:
 
     y = y1 + y2 + y3
     
-    extr = converger.FourierExtrapolator(y, poly.Polynomial((1, 1)), period_scale=n/period)
+    extr = converger.FourierExtrapolator()
+    extr.learn(y, period_scale=n/period)
     predicted_t, predicted_y = extr.predict(0, 150)
 
     plt.figure(1)

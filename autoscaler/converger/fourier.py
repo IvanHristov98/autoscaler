@@ -9,20 +9,18 @@ class FourierExtrapolator:
     _NUM_HARMONICS = 10
     
     _y: np.ndarray
-    _polynomial: poly.Polynomial
     _period_scale: float
-    _trend: np.ndarray
     _y_freqdom: np.ndarray
     _freqs: np.ndarray
     # The weights of the frequencies sorted by importance.
     _indices: List[int]
+    _is_taught: bool
+    
+    def __init__(self) -> None:
+        self._is_taught = False
 
-    def __init__(self, y: np.ndarray, polynomial: poly.Polynomial, period_scale: float) -> None:
-        self._y = y
-        self._polynomial = polynomial
-        self._period_scale = period_scale
-        
-        self._learn()
+    def is_taught(self) -> bool:
+        return self._is_taught
 
     # from start to end inclusively
     def predict(self, start: int, end: int):
@@ -37,10 +35,15 @@ class FourierExtrapolator:
 
         return t, restored_signal # + self._trend[0] * t + self._trend[1]
 
-    def _learn(self):
-        t = np.arange(0, self._y.size)
-        self._trend = self._polynomial.fit(t, self._y, deg=1).convert().coef
-        
+    def forget(self) -> None:
+        self._is_taught = False
+
+    def learn(self, y: np.ndarray, period_scale: float):
+        self._is_taught = True
+
+        self._y = y
+        self._period_scale = period_scale
+
         detrended_y = self._y# - self._trend[0] * t #- self._trend[1]
         self._y_freqdom = fft.rfft(detrended_y)
         self._freqs = fft.rfftfreq(self._y.size)
