@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.polynomial.polynomial as poly
 
-import autoscaler.fourier as fourier
+import autoscaler.converger as converger
 
 
 def main() -> None:
@@ -19,7 +19,7 @@ def main() -> None:
 
     y = y1 + y2 + y3
     
-    extr = fourier.FourierExtrapolator(y, poly.Polynomial((1, 1)), period_scale=n/period)
+    extr = converger.FourierExtrapolator(y, poly.Polynomial((1, 1)), period_scale=n/period)
     predicted_t, predicted_y = extr.predict(0, 150)
 
     plt.figure(1)
