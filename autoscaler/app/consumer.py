@@ -4,6 +4,7 @@ import numpy as np
 
 
 # N is the number of data points per period.
+# This is the num of data points per season.
 N = 1000
 # PERIOD is the length between two wave extremums. Just check your maths.
 PERIOD = 100
