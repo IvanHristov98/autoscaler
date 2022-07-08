@@ -14,17 +14,10 @@ def main():
 
     extr = cvg.FourierExtrapolator()    
     a = app.App()
-
-    # cons1 = app.SinConsumer(0.5, 3.0, 2.0)
-    # cons2 = app.CosConsumer(10, 5, 0.2)
-    # cons2 = app.CosConsumer(3, 2, 5)
-
-    # a.add_consumer("cons1", cons1)
-    # a.add_consumer("cons2", cons2)
     
     converger = cvg.Converger(0.6, extr, a)
     metri = app.MetriCollector(a)
-    stabiliser = drift.Stabiliser(metri, extr)
+    stabiliser = drift.Stabiliser(metri, extr, metric=drift.DriftMetric.KS)
     
     num_seasons = 6
     
@@ -49,8 +42,6 @@ def main():
     plt.plot(predicted_t, predicted_y, color="green", label="predicted y", alpha=0.7)
     plt.legend()
 
-    plt.show()
-    
     plt.show()
 
 

@@ -1,1 +1,1 @@
-from autoscaler.drift.stabiliser import Stabiliser # noqa
+from autoscaler.drift.stabiliser import Stabiliser, DriftMetric # noqa

@@ -6,7 +6,7 @@ def has_drift(expected, actual, buckets, bucket_type = 'bins'):
     psi_score = _calculate_psi_score(expected, actual, buckets, bucket_type)
     logging.info(f"detected psi score: {psi_score}")
     
-    if psi_score >= 0.1:
+    if psi_score >= 0.2:
         return True
 
     return False

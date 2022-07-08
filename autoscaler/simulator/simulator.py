@@ -44,7 +44,7 @@ class Simulator:
         self._cons_count = 0
         self._moment = 0
         
-        self._add_consumers(upto=10)
+        self._add_consumers(upto=25)
 
     def run(self, num_seasons: int) -> None:
         for season in range(num_seasons):
