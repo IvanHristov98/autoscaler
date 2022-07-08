@@ -8,3 +8,4 @@ from autoscaler.app.consumer import (
     ANGULAR_FREQ,
     PERIOD_SCALE,
 ) # noqa
+from autoscaler.app.metric import MetriCollector # noqa
