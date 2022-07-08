@@ -6,7 +6,7 @@ import autoscaler.app as app
 
 
 class Converger(fourier.FourierExtrapolator):
-    _FORESEEABLE_BATCH_SIZE = 512
+    _FORESEEABLE_BATCH_SIZE = 500
     
     _desired_resrc_ratio: float
     _extr: fourier.FourierExtrapolator
@@ -39,11 +39,12 @@ class Converger(fourier.FourierExtrapolator):
         self._prepare_for_load(prev_used)
 
     def _converge_with_prediction(self, t: int) -> None:
-        if self._known_until_t < t:
-            self._foresee_batch(t)
+        # if self._known_until_t < t:
+        #     self._foresee_batch(t)
 
-        load = self._predicted_load[t - self._pred_start]
-        self._prepare_for_load(load)
+        #load = self._predicted_load[t - self._pred_start]
+        _, loads  = self._extr.predict(t, t)
+        self._prepare_for_load(loads[0])
     
     def _prepare_for_load(self, load: float) -> None:
         desired_resrc = load / self._desired_resrc_ratio

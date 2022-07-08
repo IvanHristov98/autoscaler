@@ -42,8 +42,8 @@ class MetriCollector:
             raise Exception(f"fetching uncollected window [{start};{end})")
 
         for t in range(start, end):
-            vals[t] = self._used_resrc_vals[t]
-            ratios[t] = self._used_resrc_ratios[t]
+            vals[t - start] = self._used_resrc_vals[t]
+            ratios[t - start] = self._used_resrc_ratios[t]
 
         return WindowBundle(
             used_resrc_vals=vals,
