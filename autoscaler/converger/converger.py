@@ -30,6 +30,9 @@ class Converger(fourier.FourierExtrapolator):
             return
 
         self._converge_with_reaction(t)
+
+    def desired_resrc_ratio(self) -> float:
+        return self._desired_resrc_ratio
         
     def _converge_with_reaction(self, t: int) -> None:
         if t == 0:

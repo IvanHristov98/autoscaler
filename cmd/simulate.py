@@ -17,9 +17,9 @@ def main():
     
     converger = cvg.Converger(0.6, extr, a)
     metri = app.MetriCollector(a)
-    stabiliser = drift.Stabiliser(metri, extr, metric=drift.DriftMetric.KS)
+    stabiliser = drift.Stabiliser(metri, extr, metric=drift.DriftMetric.PSI)
     
-    num_seasons = 6
+    num_seasons = 20
     
     sim = simulator.Simulator(a, converger, metri, stabiliser)
     sim.run(num_seasons)
@@ -28,7 +28,7 @@ def main():
     ts = np.arange(0, app.N * num_seasons)
 
     plt.figure(1)
-    plt.title("Desired state deviation")
+    plt.title("Resource utilisation in %")
     plt.plot(ts, win.used_resrc_ratios, color="red", label="y", alpha=0.7)
     plt.legend()
     

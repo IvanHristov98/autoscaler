@@ -55,7 +55,7 @@ class Stabiliser:
         win = self._metri.window((season - 1) * app.N, season * app.N)
         _, pred = self._extr.predict((season - 1) * app.N, season * app.N - 1)
         
-        if self._metric == DriftMetric.PSI and psi.has_drift(pred, win.used_resrc_vals, buckets=10):
+        if self._metric == DriftMetric.PSI and psi.has_drift(pred, win.used_resrc_vals, buckets=25):
             return True
 
         if self._metric == DriftMetric.KS and ks.has_drift(pred, win.used_resrc_vals):

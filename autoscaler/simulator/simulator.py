@@ -1,6 +1,6 @@
 import logging
 import random
-from typing import List, Tuple
+from typing import List, NamedTuple, Tuple
 
 import numpy as np
 
@@ -9,7 +9,7 @@ import autoscaler.converger as cvg
 import autoscaler.drift as drift
 
 
-class Metrics:
+class Metrics(NamedTuple):
     concept_drift_detection_ratio: float
     relative_loss: float
 
@@ -27,6 +27,7 @@ class Simulator:
     _metri: app.MetriCollector
     _stabiliser: drift.Stabiliser
     _cons_count: int
+    _drift_count: int
     _moment: int
     
     def __init__(
@@ -42,18 +43,28 @@ class Simulator:
         self._stabiliser = stabiliser
 
         self._cons_count = 0
+        self._drift_count = 0
         self._moment = 0
         
         self._add_consumers(upto=25)
 
-    def run(self, num_seasons: int) -> None:
+    def run(self, num_seasons: int) -> Metrics:
         for season in range(num_seasons):
             logging.info(f"running season {season}")
 
             self._stabiliser.stabilise(season)
             self._run_season(season)
+        
+        rel_loss = self._calc_relative_loss(num_seasons)
+        drift_detection_ratio = self._stabiliser.num_drifts() / self._drift_count
 
-        logging.info(f"drift counts {self._stabiliser.num_drifts()}")
+        logging.info(f"rel loss {rel_loss}")
+        logging.info(f"drift detection ratio {drift_detection_ratio}")
+        
+        return Metrics(
+            relative_loss=rel_loss,
+            concept_drift_detection_ratio=drift_detection_ratio,
+        )
 
     def _run_season(self, season: int) -> None:
         # optionally remove and add consumers.
@@ -61,6 +72,7 @@ class Simulator:
             logging.info(f"concept actually drifted")
             self._rem_consumers()
             self._add_consumers()
+            self._drift_count += 1
             
         for _ in range(app.N):
             self._converger.converge(self._moment)
@@ -118,3 +130,10 @@ class Simulator:
         phase = self._LOW_PHASE + random.random() * (self._HIGH_PHASE - self._LOW_PHASE)
 
         return ampli, freq, phase
+
+    def _calc_relative_loss(self, num_seasons: int) -> float:
+        win = self._metri.window(0, app.N * num_seasons)
+
+        loss = np.sum(np.abs(win.used_resrc_ratios - self._converger.desired_resrc_ratio()))
+
+        return loss / win.used_resrc_ratios.size

@@ -6,7 +6,7 @@ import numpy.polynomial.polynomial as poly
 
 
 class FourierExtrapolator:
-    _NUM_HARMONICS = 10
+    _NUM_HARMONICS = 100
     
     _y: np.ndarray
     _y_mean: float
