@@ -1,10 +1,14 @@
 import logging
+
+import matplotlib.pyplot as plt
+import numpy as np
+
 import autoscaler.converger as cvg
 import autoscaler.app as app
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     extr = cvg.FourierExtrapolator()    
     a = app.App()
@@ -16,10 +20,22 @@ def main():
     a.add_consumer("cons2", cons2)
     
     converger = cvg.Converger(0.6, extr, a)
+    metri = app.MetriCollector(a)
     
     for i in range(1000):
         converger.converge(i)
-        print(a.used_resrc_ratio(i))
+        metri.collect(i)
+
+    win = metri.window(0, 1000)
+    ts = np.arange(0, 1000)
+    
+    # plt.figure(1)
+    # plt.title("Desired state deviation")
+    # plt.plot(ts, win, color="red", label="y", alpha=0.7)
+    # plt.legend()
+    
+    # plt.show()
+    
 
 
 if __name__ == "__main__":
