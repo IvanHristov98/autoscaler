@@ -38,7 +38,7 @@ class CosConsumer(Consumer):
         self._phase = phase
 
     def required_resrc(self, t: int) -> float:
-        return self._ampli * np.cos(self._freq * ANGULAR_FREQ * t + self._phase)
+        return self._ampli + self._ampli * np.cos(self._freq * ANGULAR_FREQ * (t % N) + self._phase)
 
 
 # TODO: Fix code repetition in some way... but I don't really care for now.
@@ -55,4 +55,4 @@ class SinConsumer(Consumer):
         self._phase = phase
 
     def required_resrc(self, t: int) -> float:
-        return self._ampli * np.sin(self._freq * ANGULAR_FREQ * t + self._phase)
+        return self._ampli + self._ampli * np.sin(self._freq * ANGULAR_FREQ * (t % N) + self._phase)
