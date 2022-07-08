@@ -9,6 +9,7 @@ class FourierExtrapolator:
     _NUM_HARMONICS = 10
     
     _y: np.ndarray
+    _y_mean: float
     _period_scale: float
     _y_freqdom: np.ndarray
     _freqs: np.ndarray
@@ -33,7 +34,7 @@ class FourierExtrapolator:
 
             restored_signal += ampli * np.cos(2.0 * np.pi * self._freqs[i] * t * self._period_scale + phase)
 
-        return t, restored_signal # + self._trend[0] * t + self._trend[1]
+        return t, restored_signal + self._y_mean # + self._trend[0] * t + self._trend[1]
 
     def forget(self) -> None:
         self._is_taught = False
@@ -41,7 +42,8 @@ class FourierExtrapolator:
     def learn(self, y: np.ndarray, period_scale: float):
         self._is_taught = True
 
-        self._y = y
+        self._y_mean = np.mean(y)
+        self._y = y - self._y_mean
         self._period_scale = period_scale
 
         detrended_y = self._y# - self._trend[0] * t #- self._trend[1]

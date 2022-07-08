@@ -27,13 +27,13 @@ class App:
 
     # used_resrc should return the amount of used rsc in % for moment t.
     def used_resrc_ratio(self, t: int) -> float:        
-        return self.used_resrc(t) / self._resrc_capacity
+        return self.used_resrc(t) / (self._resrc_capacity + 0.0000001)
 
     def used_resrc(self, t: int) -> float:
         used = 0.0
         
         for consumer in self._consumers.values():
-            used += abs(consumer.required_resrc(t))
+            used += consumer.required_resrc(t)
 
         return min(used, self._resrc_capacity)
 

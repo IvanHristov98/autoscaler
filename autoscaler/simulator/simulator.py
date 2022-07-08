@@ -6,6 +6,7 @@ import numpy as np
 
 import autoscaler.app as app
 import autoscaler.converger as cvg
+import autoscaler.drift as drift
 
 
 class Metrics:
@@ -24,6 +25,7 @@ class Simulator:
     _a: app.App
     _converger: cvg.Converger
     _metri: app.MetriCollector
+    _stabiliser: drift.Stabiliser
     _cons_count: int
     _moment: int
     
@@ -31,26 +33,34 @@ class Simulator:
         self, 
         a: app.App, 
         converger: cvg.Converger,
-        metri: app.MetriCollector
+        metri: app.MetriCollector,
+        stabiliser: drift.Stabiliser,
     ) -> None:
         self._a = a
         self._converger = converger
         self._metri = metri
+        self._stabiliser = stabiliser
 
         self._cons_count = 0
         self._moment = 0
         
-        self._add_consumers(upto=4)
+        self._add_consumers(upto=25)
 
     def run(self, num_seasons: int) -> None:
         for season in range(num_seasons):
             logging.info(f"running season {season}")
 
-            self._run_season()
+            self._stabiliser.stabilise(season)
+            self._run_season(season)
 
-    def _run_season(self) -> None:
-        self._rem_consumers()
-        self._add_consumers()
+        logging.info(f"drift counts {self._stabiliser.num_drifts()}")
+
+    def _run_season(self, season: int) -> None:
+        # optionally remove and add consumers.
+        if season % 3 == 0:
+            logging.info(f"concept actually drifted")
+            self._rem_consumers()
+            self._add_consumers()
             
         for _ in range(app.N):
             self._converger.converge(self._moment)
@@ -58,7 +68,7 @@ class Simulator:
 
             self._moment += 1
 
-    def _rem_consumers(self, upto: int = 2) -> None:
+    def _rem_consumers(self, upto: int = 5) -> None:
         num = random.randint(0, upto)
         names = set(self._a.consumer_names())
 
@@ -68,7 +78,7 @@ class Simulator:
             
             names.remove(random.choice(tuple(names)))            
 
-    def _add_consumers(self, upto: int = 2) -> None:
+    def _add_consumers(self, upto: int = 5) -> None:
         num = random.randint(0, upto)
         consumers = self._gen_consumers(num)
 
